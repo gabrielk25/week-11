@@ -33,129 +33,142 @@
 
   function formatTime(iso) {
     if (!iso) return "-";
-    return new Date(iso).toLocaleString("id-ID", {
-      dateStyle: "medium",
-      timeStyle: "medium"
+    return new Date(iso).toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
     });
-  }
-
-  function appendLog(text) {
-    if (!logEl) return;
-    const line = document.createElement("div");
-    line.textContent = `[${new Date().toLocaleTimeString("id-ID")}] ${text}`;
-    logEl.prepend(line);
   }
 
   function getOrders() {
     try {
-      return JSON.parse(localStorage.getItem(ORDERS_KEY)) || [];
+      const raw = localStorage.getItem(ORDERS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (_) {
       return [];
     }
   }
 
-  function saveOrders(orders) {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-  }
-
-  function setStatus(orderId, status) {
+  function setOrderStatus(orderId, newStatus) {
     const orders = getOrders();
-    const order = orders.find((o) => o.id === orderId);
-    if (!order) return;
+    const target = orders.find(function (o) {
+      return o.id === orderId;
+    });
+    if (!target) return;
 
-    order.status = status;
-    order.updatedAt = new Date().toISOString();
-    saveOrders(orders);
-
-    if (channel) {
-      channel.postMessage({
-        type: "QRIS_STATUS_UPDATED",
-        orderId: order.id,
-        status: status
-      });
+    target.status = newStatus;
+    if (newStatus === "PAID") {
+      target.paidAt = new Date().toISOString();
+      target.approvalRef = "APR-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    } else if (newStatus === "REJECTED") {
+      target.rejectedAt = new Date().toISOString();
     }
 
-    appendLog(`Invoice ${order.id} (${order.customer.nama}) -> ${status}`);
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+
+    if (channel) {
+      try {
+        channel.postMessage({
+          type: "ORDER_STATUS_CHANGED",
+          payload: { orderId: orderId, status: newStatus },
+          ts: Date.now()
+        });
+      } catch (_) {}
+    }
+
+    logEl.textContent =
+      "Terkirim realtime: " + orderId + " -> " + newStatus + " (" + formatTime(new Date().toISOString()) + ")";
     render();
   }
 
   function render() {
     const orders = getOrders();
-    if (!orders.length) {
-      root.innerHTML = `
-        <div class="panel" style="text-align:center;padding:30px;">
-          <p style="color:var(--text-muted);margin-bottom:14px;">Belum ada invoice QRIS yang masuk.</p>
-          <a href="index.html" class="btn btn-primary">Kembali ke Katalog</a>
-        </div>`;
-      return;
+    const pending = orders.filter(function (o) {
+      return o.status === "PENDING";
+    });
+    const processed = orders.filter(function (o) {
+      return o.status !== "PENDING";
+    });
+
+    if (focusOrderId) {
+      pending.sort(function (a, b) {
+        if (a.id === focusOrderId) return -1;
+        if (b.id === focusOrderId) return 1;
+        return 0;
+      });
     }
 
-    const sorted = [...orders].sort((a, b) => {
-      if (a.id === focusOrderId) return -1;
-      if (b.id === focusOrderId) return 1;
-      return 0;
-    });
+    const pendingHtml =
+      pending.length === 0
+        ? '<div class="empty">Tidak ada pembayaran QRIS yang menunggu approval.</div>'
+        : '<div class="list">' +
+          pending.map(function (o) {
+            const isFocus = focusOrderId && o.id === focusOrderId;
+            return (
+              '<div class="tx-card ' + (isFocus ? "highlight" : "") + '">' +
+              '  <div>' +
+              '    <div class="tx-id">' + escapeHtml(o.id) + (isFocus ? " &bull; TARGET" : "") + '</div>' +
+              '    <div class="tx-meta">' + escapeHtml(o.customer.nama) + ' &bull; ' + escapeHtml(o.qrisRef) + ' &bull; ' + formatTime(o.createdAt) + '</div>' +
+              '    <div class="tx-amount">' + formatRupiah(o.grandTotal) + '</div>' +
+              '  </div>' +
+              '  <div class="tx-actions">' +
+              '    <button type="button" class="btn btn-approve" data-action="PAID" data-id="' + escapeHtml(o.id) + '">Approve</button>' +
+              '    <button type="button" class="btn btn-reject" data-action="REJECTED" data-id="' + escapeHtml(o.id) + '">Reject</button>' +
+              '  </div>' +
+              '</div>'
+            );
+          }).join("") +
+          '</div>';
 
-    root.innerHTML = sorted.map((order) => {
-      const isFocus = order.id === focusOrderId;
-      let pillClass = "status-pending";
-      let pillLabel = "&bull; MENUNGGU BAYAR";
-      if (order.status === "PAID") {
-        pillClass = "status-paid";
-        pillLabel = "&bull; PAID";
-      } else if (order.status === "REJECTED") {
-        pillClass = "status-rejected";
-        pillLabel = "&bull; DITOLAK";
-      }
+    const processedHtml =
+      processed.length === 0
+        ? '<div class="empty">Belum ada transaksi yang diproses.</div>'
+        : '<div class="list">' +
+          processed.slice(0, 10).map(function (o) {
+            const tag =
+              o.status === "PAID"
+                ? '<span class="tag tag-paid">PAID</span>'
+                : '<span class="tag tag-rejected">REJECTED</span>';
+            return (
+              '<div class="tx-card">' +
+              '  <div>' +
+              '    <div class="tx-id">' + escapeHtml(o.id) + '</div>' +
+              '    <div class="tx-meta">' + escapeHtml(o.customer.nama) + ' &bull; ' + formatRupiah(o.grandTotal) + '</div>' +
+              '  </div>' +
+              '  <div>' + tag + '</div>' +
+              '</div>'
+            );
+          }).join("") +
+          '</div>';
 
-      return `
-        <div class="panel" style="margin-bottom:14px;${isFocus ? "border:2px solid var(--primary);" : ""}">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-            <div>
-              <strong>${escapeHtml(order.id)}</strong>
-              ${isFocus ? `<span style="font-size:0.72rem;background:var(--primary-light);color:var(--primary);padding:2px 8px;border-radius:6px;margin-left:6px;font-weight:700;">TARGET AKTIF</span>` : ""}
-              <div style="font-size:0.8rem;color:var(--text-muted);">${formatTime(order.createdAt)}</div>
-            </div>
-            <span class="status-pill ${pillClass}">${pillLabel}</span>
-          </div>
-
-          <div style="font-size:0.9rem;margin-bottom:14px;">
-            <div>Penerima: <strong>${escapeHtml(order.customer.nama)}</strong> (${escapeHtml(order.customer.kota || "-")})</div>
-            <div>Total Tagihan: <strong style="color:var(--primary);font-size:1.05rem;">${formatRupiah(order.total)}</strong></div>
-          </div>
-
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            ${order.status === "PENDING" ? `
-              <button class="btn btn-success" data-act="PAID" data-id="${escapeHtml(order.id)}">&#10003; Approve QRIS (PAID)</button>
-              <button class="btn btn-danger" data-act="REJECTED" data-id="${escapeHtml(order.id)}">&#10005; Tolak Pembayaran</button>
-            ` : `
-              <button class="btn btn-outline" data-act="PENDING" data-id="${escapeHtml(order.id)}">Reset ke MENUNGGU BAYAR</button>
-            `}
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    root.querySelectorAll("button[data-act]").forEach((btn) => {
-      btn.addEventListener("click", function () {
-        setStatus(this.dataset.id, this.dataset.act);
-      });
-    });
+    root.innerHTML =
+      '<div class="section-label">Menunggu Approval (' + pending.length + ')</div>' +
+      pendingHtml +
+      '<div class="section-label">Baru Diproses (' + processed.length + ')</div>' +
+      processedHtml;
   }
 
-  if (channel) {
-    channel.onmessage = function (ev) {
-      if (ev.data && ev.data.type === "ORDER_CREATED") {
-        appendLog(`Invoice baru masuk: ${ev.data.orderId}`);
-        render();
-      }
-    };
-  }
-
-  window.addEventListener("storage", function (ev) {
-    if (ev.key === ORDERS_KEY) render();
+  root.addEventListener("click", function (e) {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const action = btn.getAttribute("data-action");
+    const id = btn.getAttribute("data-id");
+    setOrderStatus(id, action);
   });
 
-  appendLog("Simulator QRIS aktif.");
+  window.addEventListener("storage", function (e) {
+    if (e.key === ORDERS_KEY) {
+      render();
+    }
+  });
+
+  if (channel) {
+    channel.addEventListener("message", function () {
+      render();
+    });
+  }
+
+  setInterval(render, 1500);
   render();
 })();
