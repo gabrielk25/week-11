@@ -10,7 +10,147 @@
 
   <div id="site-topbar"></div>
 
-  <header class="hero compact">
+  <header class="hero compact"><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — Nails Studio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="brand-link">
+        <div class="brand-name">Nails Studio</div>
+        <div class="brand-tagline">Checkout Pesanan</div>
+      </a>
+      <nav class="nav-links">
+        <a href="cart.html" class="nav-btn">&larr; Kembali ke Keranjang</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="section-title">
+      <span>Detail Pengiriman &amp; Pembayaran</span>
+    </div>
+
+    <form id="checkout-form" class="two-col">
+      <div class="panel">
+        <h3 style="margin-bottom:14px;font-family:Georgia,serif;">Data Penerima</h3>
+        <div class="form-group">
+          <label for="nama">Nama Lengkap</label>
+          <input type="text" id="nama" required placeholder="Contoh: Clarissa Putri" />
+        </div>
+        <div class="form-group">
+          <label for="whatsapp">Nomor WhatsApp</label>
+          <input type="tel" id="whatsapp" required placeholder="081234567890" />
+        </div>
+        <div class="form-group">
+          <label for="ukuran">Ukuran Kuku Default (Bisa dicampur di catatan)</label>
+          <select id="ukuran">
+            <option value="XS">XS (Extra Small)</option>
+            <option value="S">S (Small)</option>
+            <option value="M" selected>M (Medium - Standar)</option>
+            <option value="L">L (Large)</option>
+            <option value="Custom">Custom (Tulis di catatan)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="alamat">Alamat Lengkap Pengiriman</label>
+          <textarea id="alamat" rows="3" required placeholder="Jalan, No Rumah, Kecamatan, Kota, Kode Pos"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="catatan">Catatan Tambahan (Opsional)</label>
+          <input type="text" id="catatan" placeholder="Misal: Kuku jempol ukuran L" />
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-bottom:14px;font-family:Georgia,serif;">Pengiriman &amp; Metode Bayar</h3>
+        <div class="form-group">
+          <label for="pengiriman">Layanan Pengiriman</label>
+          <select id="pengiriman">
+            <option value="Reguler">Reguler (2–3 Hari) — Rp 10.000</option>
+            <option value="Express">Express (1 Hari) — Rp 20.000</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="metode">Metode Pembayaran</label>
+          <select id="metode">
+            <option value="QRIS">QRIS Instan (Otomatis &amp; Real-time)</option>
+            <option value="COD">COD (Bayar di Tempat)</option>
+          </select>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;" />
+        <div id="checkout-summary"></div>
+        <button type="submit" class="btn btn-primary btn-full" style="margin-top:16px;">
+          Buat Pesanan Sekarang
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer>
+    <p><strong>Nails Studio</strong> — Katalog Resmi Kuku Palsu</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    const { getCart, getCartSubtotal, createOrder, formatRupiah, escapeHtml } = window.NailsApp;
+    const cart = getCart();
+
+    if (!cart.length) {
+      window.location.href = "cart.html";
+    }
+
+    const pengirimanEl = document.getElementById("pengiriman");
+    const summaryEl = document.getElementById("checkout-summary");
+
+    function updateSummary() {
+      const subtotal = getCartSubtotal();
+      const ongkir = pengirimanEl.value === "Express" ? 20000 : 10000;
+      const total = subtotal + ongkir;
+
+      summaryEl.innerHTML = `
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:10px;">
+          ${cart.map((i) => `<div>${escapeHtml(i.nama)} (${i.qty}x) — ${formatRupiah(i.harga * i.qty)}</div>`).join("")}
+        </div>
+        <div class="summary-row"><span>Subtotal Produk</span><span>${formatRupiah(subtotal)}</span></div>
+        <div class="summary-row"><span>Ongkos Kirim</span><span>${formatRupiah(ongkir)}</span></div>
+        <div class="summary-total"><span>Total Bayar</span><span>${formatRupiah(total)}</span></div>
+      `;
+    }
+
+    pengirimanEl.addEventListener("change", updateSummary);
+    updateSummary();
+
+    document.getElementById("checkout-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const order = createOrder({
+        nama: document.getElementById("nama").value.trim(),
+        whatsapp: document.getElementById("whatsapp").value.trim(),
+        ukuran: document.getElementById("ukuran").value,
+        alamat: document.getElementById("alamat").value.trim(),
+        catatan: document.getElementById("catatan").value.trim(),
+        pengiriman: pengirimanEl.value,
+        metode: document.getElementById("metode").value
+      });
+
+      if (!order) return;
+
+      if (order.paymentMethod === "QRIS") {
+        window.location.href = `payment.html?order=${encodeURIComponent(order.id)}`;
+      } else {
+        window.location.href = `thank-you.html?order=${encodeURIComponent(order.id)}`;
+      }
+    });
+  </script>
+</body>
+</html>
     <span class="brand-tag">Langkah 2 dari 3 &bull; Checkout</span>
     <h1>Checkout Pesanan</h1>
     <p>Lengkapi data penerima dan pilih pengiriman sebelum membayar dengan QRIS Nails Studio.</p>
