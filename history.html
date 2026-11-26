@@ -3,99 +3,157 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Riwayat Pesanan — Nails Studio</title>
+  <title>Riwayat Transaksi — Nails Studio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
-      <a href="index.html" class="brand-link">
-        <div class="brand-name">Nails Studio</div>
-        <div class="brand-tagline">Riwayat Pesanan</div>
-      </a>
-      <nav class="nav-links">
-        <a href="index.html" class="nav-btn">Katalog</a>
-        <a href="history.html" class="nav-btn active">Riwayat Pesanan</a>
-        <a href="qris-approve.html" class="nav-btn">Simulator QRIS</a>
-        <a href="cart.html" class="nav-btn">Keranjang <span class="cart-badge">0</span></a>
-      </nav>
-    </div>
+  <div id="site-topbar"></div>
+
+  <header class="hero-wrap">
+    <section class="hero compact">
+      <span class="brand-tag">Status Tersinkronisasi Realtime</span>
+      <h1>Riwayat Transaksi</h1>
+      <p>Pantau seluruh pesanan kuku palsu dan status pembayaran QRIS Anda secara langsung.</p>
+    </section>
   </header>
 
   <main class="container">
-    <div class="section-title">
-      <span>Riwayat Pesanan Saya</span>
-      <span class="section-count" id="order-count">0 Pesanan</span>
-    </div>
-
     <div id="history-root"></div>
   </main>
 
   <footer>
     <p><strong>Nails Studio</strong> — Katalog Resmi Kuku Palsu</p>
+    <p>Instagram: @nailsstudio.id &bull; Jam Operasional: Senin – Sabtu, 09.00 – 17.00 WIB</p>
   </footer>
 
   <script src="app.js"></script>
   <script>
-    const { getOrders, formatRupiah, formatTime, escapeHtml, ORDERS_KEY, channel } = window.NailsApp;
-    const root = document.getElementById("history-root");
-    const countEl = document.getElementById("order-count");
+    (function () {
+      const store = window.NSStore;
+      store.renderTopbar("history");
 
-    function renderHistory() {
-      const orders = getOrders();
-      countEl.textContent = `${orders.length} Pesanan`;
+      const root = document.getElementById("history-root");
+      let activeFilter = "ALL";
+      let lastSignature = "";
 
-      if (!orders.length) {
-        root.innerHTML = `
-          <div class="panel" style="text-align:center;padding:32px;">
-            <p style="color:var(--text-muted);margin-bottom:14px;">Belum ada riwayat pesanan.</p>
-            <a href="index.html" class="btn btn-primary">Mulai Belanja</a>
-          </div>`;
-        return;
+      function getSignature(orders) {
+        return activeFilter + "|" + orders.map(function (o) {
+          return o.id + ":" + o.status + ":" + (o.paidAt || "");
+        }).join(",");
       }
 
-      root.innerHTML = orders.map((order) => {
-        let statusClass = "status-pending";
-        if (order.status === "PAID") statusClass = "status-paid";
-        if (order.status === "REJECTED") statusClass = "status-rejected";
+      function renderHistory(force) {
+        const orders = store.getOrders();
+        const sig = getSignature(orders);
+        if (!force && sig === lastSignature) return;
+        lastSignature = sig;
 
-        return `
-          <div class="panel">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
-              <div>
-                <strong>Order #${escapeHtml(order.id)}</strong> &bull;
-                <span style="font-size:0.85rem;color:var(--text-muted);">${formatTime(order.createdAt)}</span>
-              </div>
-              <span class="status-pill ${statusClass}">${escapeHtml(order.status)}</span>
-            </div>
+        if (orders.length === 0) {
+          root.innerHTML =
+            '<div class="panel empty-state">' +
+            '  <h3>Belum ada riwayat transaksi</h3>' +
+            '  <p>Pesanan yang Anda buat akan tampil di sini lengkap dengan status pembayaran QRIS secara realtime.</p>' +
+            '  <a href="index.html" class="btn btn-primary">Mulai Belanja</a>' +
+            '</div>';
+          return;
+        }
 
-            <div style="font-size:0.88rem;color:var(--text-muted);margin-bottom:12px;">
-              ${order.items.map((i) => `${escapeHtml(i.nama)} (${i.qty}x)`).join(", ")}
-            </div>
+        const filtered = orders.filter(function (o) {
+          return activeFilter === "ALL" ? true : o.status === activeFilter;
+        });
 
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:10px;border-top:1px dashed var(--border);">
-              <div>Total: <strong style="color:var(--primary);">${formatRupiah(order.total)}</strong> (${escapeHtml(order.paymentMethod)})</div>
-              <div style="display:flex;gap:8px;">
-                ${order.status === "PENDING" && order.paymentMethod === "QRIS" ? `
-                  <a href="payment.html?order=${encodeURIComponent(order.id)}" class="btn btn-primary" style="padding:7px 12px;font-size:0.82rem;">Bayar QRIS</a>
-                ` : ""}
-                <a href="thank-you.html?order=${encodeURIComponent(order.id)}" class="btn btn-outline" style="padding:7px 12px;font-size:0.82rem;">Detail Struk</a>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-    }
+        const countPending = orders.filter(function (o) { return o.status === "PENDING"; }).length;
+        const countPaid = orders.filter(function (o) { return o.status === "PAID"; }).length;
+        const countRejected = orders.filter(function (o) { return o.status === "REJECTED"; }).length;
 
-    if (channel) {
-      channel.onmessage = renderHistory;
-    }
-    window.addEventListener("storage", (ev) => {
-      if (ev.key === ORDERS_KEY) renderHistory();
-    });
+        const filterButtons =
+          '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;">' +
+          '  <button type="button" class="btn btn-sm ' + (activeFilter === "ALL" ? "btn-primary" : "btn-outline") + '" data-filter="ALL">Semua (' + orders.length + ')</button>' +
+          '  <button type="button" class="btn btn-sm ' + (activeFilter === "PENDING" ? "btn-primary" : "btn-outline") + '" data-filter="PENDING">Menunggu (' + countPending + ')</button>' +
+          '  <button type="button" class="btn btn-sm ' + (activeFilter === "PAID" ? "btn-primary" : "btn-outline") + '" data-filter="PAID">Paid (' + countPaid + ')</button>' +
+          '  <button type="button" class="btn btn-sm ' + (activeFilter === "REJECTED" ? "btn-primary" : "btn-outline") + '" data-filter="REJECTED">Ditolak (' + countRejected + ')</button>' +
+          '</div>';
 
-    renderHistory();
+        const rowsHtml = filtered.length === 0
+          ? '<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">Tidak ada transaksi dengan filter ini.</td></tr>'
+          : filtered.map(function (o) {
+              const itemsText = o.items.map(function (it) {
+                return store.escapeHtml(it.nama) + " &times;" + it.qty;
+              }).join(", ");
+
+              const actionHtml =
+                o.status === "PENDING"
+                  ? '<a href="payment.html?order=' + encodeURIComponent(o.id) + '" class="btn btn-primary btn-sm">Bayar QRIS</a>'
+                  : '<a href="thank-you.html?order=' + encodeURIComponent(o.id) + '" class="btn btn-outline btn-sm">Lihat Struk</a> ' +
+                    '<a href="payment.html?order=' + encodeURIComponent(o.id) + '" class="btn btn-outline btn-sm">Status</a>';
+
+              return (
+                '<tr>' +
+                '  <td>' +
+                '    <strong>' + store.escapeHtml(o.id) + '</strong><br>' +
+                '    <small style="color:var(--text-muted);">' + store.escapeHtml(store.formatWaktu(o.createdAt)) + '</small>' +
+                '  </td>' +
+                '  <td>' +
+                '    <div><strong>' + store.escapeHtml(o.customer.nama) + '</strong></div>' +
+                '    <small style="color:var(--text-muted);">' + store.escapeHtml(o.customer.kota) + '</small>' +
+                '  </td>' +
+                '  <td style="max-width:260px;">' + itemsText + '</td>' +
+                '  <td>' +
+                '    <div style="font-size:0.78rem; color:var(--text-muted);">Sub: ' + store.formatRupiah(o.subtotal) + '</div>' +
+                '    <strong>' + store.formatRupiah(o.grandTotal) + '</strong>' +
+                '  </td>' +
+                '  <td>' +
+                '    ' + store.renderStatusBadge(o.status) +
+                (o.paidAt ? '<div style="font-size:0.72rem; color:var(--text-muted); margin-top:4px;">' + store.escapeHtml(store.formatWaktu(o.paidAt)) + '</div>' : '') +
+                '  </td>' +
+                '  <td style="white-space:nowrap;">' + actionHtml + '</td>' +
+                '</tr>'
+              );
+            }).join("");
+
+        root.innerHTML =
+          '<section class="panel">' +
+          '  <div class="panel-title">' +
+          '    <span>Daftar Transaksi</span>' +
+          '    <a href="index.html" class="btn btn-outline btn-sm">Kembali ke Katalog</a>' +
+          '  </div>' +
+          '  ' + filterButtons +
+          '  <div class="table-wrap">' +
+          '    <table class="data-table">' +
+          '      <thead>' +
+          '        <tr>' +
+          '          <th>Invoice</th>' +
+          '          <th>Penerima</th>' +
+          '          <th>Item</th>' +
+          '          <th>Total</th>' +
+          '          <th>Status</th>' +
+          '          <th>Aksi</th>' +
+          '        </tr>' +
+          '      </thead>' +
+          '      <tbody>' + rowsHtml + '</tbody>' +
+          '    </table>' +
+          '  </div>' +
+          '</section>';
+      }
+
+      root.addEventListener("click", function (e) {
+        const btn = e.target.closest("[data-filter]");
+        if (!btn) return;
+        activeFilter = btn.getAttribute("data-filter");
+        renderHistory(true);
+      });
+
+      store.onRealtimeUpdate(function () {
+        renderHistory(false);
+      });
+
+      setInterval(function () {
+        renderHistory(false);
+      }, 1000);
+
+      renderHistory(true);
+    })();
   </script>
 </body>
 </html>
