@@ -8,68 +8,60 @@
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
+  <header class="topbar">
+    <div class="topbar-inner">
       <a href="index.html" class="brand-link">
-        <div class="brand-name">Nails Studio</div>
-        <div class="brand-tagline">Koleksi Kuku Palsu Handmade &amp; Reusable Press-On Nails</div>
+        <span class="brand-title">Nails Studio</span>
+        <span class="brand-sub">STORE</span>
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="nav-btn active">Katalog</a>
-        <a href="history.html" class="nav-btn">Riwayat Pesanan</a>
-        <a href="qris-approve.html" class="nav-btn">Simulator QRIS</a>
-        <a href="cart.html" class="nav-btn">Keranjang <span class="cart-badge">0</span></a>
+        <a href="index.html" class="nav-link active">Katalog</a>
+        <a href="cart.html" class="nav-link">Keranjang <span class="cart-badge">0</span></a>
+        <a href="history.html" class="nav-link">Riwayat Transaksi</a>
       </nav>
     </div>
   </header>
 
-  <section class="hero">
-    <h1>Katalog Koleksi Terbaru</h1>
-    <p>
-      Setiap set berisi 10–24 pcs kuku palsu premium dengan lem gel, kikir mini, dan pendorong kutikula.
-      Tampilan salon instan dalam hitungan menit.
-    </p>
+  <section class="hero-banner">
+    <div class="hero-eyebrow">KATALOG RESMI KOLEKSI PRESS-ON NAILS</div>
+    <h1>Nails Studio</h1>
+    <p>Etalase kuku palsu handmade pilihan berkualitas salon dengan lem gel, kikir mini, dan pendorong kutikula dalam setiap set.</p>
   </section>
 
   <main class="container">
-    <div class="filter-bar">
-      <input type="text" id="search-input" placeholder="Cari nama desain kuku..." />
-      <select id="category-filter">
-        <option value="">Semua Kategori</option>
-      </select>
-      <select id="shape-filter">
-        <option value="">Semua Bentuk</option>
-      </select>
+    <div class="section-header">
+      <h2>Daftar Koleksi Kuku Palsu</h2>
+      <span class="section-count" id="total-produk">Menampilkan 0 set kuku</span>
     </div>
 
-    <div class="section-title">
-      <span>Semua Produk</span>
-      <span class="section-count" id="total-produk">0 Produk</span>
+    <div class="filter-bar">
+      <input type="text" id="search-input" placeholder="Cari desain kuku..." />
+      <select id="category-filter"><option value="">Semua Kategori</option></select>
+      <select id="shape-filter"><option value="">Semua Bentuk</option></select>
     </div>
 
     <div class="catalog-grid" id="catalog-grid"></div>
   </main>
 
   <footer>
-    <p><strong>Nails Studio</strong> — Katalog Resmi Kuku Palsu</p>
-    <p>Instagram: @nailsstudio.id &bull; Jam Operasional: Senin – Sabtu, 09.00 – 17.00 WIB</p>
+    <p><strong>Nails Studio</strong> — Toko Online Kuku Palsu Handmade</p>
+    <p>Simulasi Pemesanan &amp; Pembayaran QRIS &bull; Instagram: @nailsstudio.id</p>
   </footer>
 
   <script src="app.js"></script>
   <script>
-    const { produkKuku, escapeHtml, formatRupiah, addToCart } = window.NailsApp;
+    const { produkKuku, escapeHtml, formatRupiah, addToCart, getItemQtyInCart } = window.NailsApp;
     const grid = document.getElementById("catalog-grid");
     const totalEl = document.getElementById("total-produk");
     const searchInput = document.getElementById("search-input");
     const catSelect = document.getElementById("category-filter");
     const shapeSelect = document.getElementById("shape-filter");
 
-    // Isi opsi filter otomatis
-    [...new Set(produkKuku.map((p) => p.kategori))].sort().forEach((cat) => {
-      catSelect.innerHTML += `<option value="${escapeHtml(cat)}">${escapeHtml(cat)}</option>`;
+    [...new Set(produkKuku.map((p) => p.kategori))].sort().forEach((c) => {
+      catSelect.innerHTML += `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`;
     });
-    [...new Set(produkKuku.map((p) => p.bentuk))].sort().forEach((shape) => {
-      shapeSelect.innerHTML += `<option value="${escapeHtml(shape)}">${escapeHtml(shape)}</option>`;
+    [...new Set(produkKuku.map((p) => p.bentuk))].sort().forEach((s) => {
+      shapeSelect.innerHTML += `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`;
     });
 
     function renderCatalog() {
@@ -78,39 +70,53 @@
       const shape = shapeSelect.value;
 
       const filtered = produkKuku.filter((p) => {
-        const matchText = p.nama.toLowerCase().includes(q) || p.deskripsi.toLowerCase().includes(q);
+        const matchQ = p.nama.toLowerCase().includes(q) || p.deskripsi.toLowerCase().includes(q);
         const matchCat = !cat || p.kategori === cat;
         const matchShape = !shape || p.bentuk === shape;
-        return matchText && matchCat && matchShape;
+        return matchQ && matchCat && matchShape;
       });
 
-      totalEl.textContent = `${filtered.length} Produk`;
+      totalEl.textContent = `Menampilkan ${filtered.length} set kuku`;
 
       if (!filtered.length) {
-        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:30px;">Produk tidak ditemukan.</p>`;
+        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:32px;">Set kuku tidak ditemukan.</p>`;
         return;
       }
 
-      grid.innerHTML = filtered.map((item) => `
-        <article class="product-card">
-          <div class="product-image">
-            ${item.badge ? `<span class="badge ${item.badgeTipe === "gold" ? "gold" : ""}">${escapeHtml(item.badge)}</span>` : ""}
-            <img src="${escapeHtml(item.gambar)}" alt="${escapeHtml(item.nama)}" loading="lazy" />
-          </div>
-          <div class="product-info">
-            <div class="product-category">${escapeHtml(item.kategori)}</div>
-            <h2 class="product-title">${escapeHtml(item.nama)}</h2>
-            <p class="product-desc">${escapeHtml(item.deskripsi)}</p>
-            <div class="product-meta">
-              <span class="product-price">${formatRupiah(item.harga)}</span>
-              <span class="product-shape">${escapeHtml(item.bentuk)}</span>
+      grid.innerHTML = filtered.map((item) => {
+        const inCartQty = getItemQtyInCart(item.id);
+        const btnText = inCartQty > 0
+          ? `+ Tambah Lagi (${inCartQty} di keranjang)`
+          : `+ Tambah ke Keranjang`;
+
+        return `
+          <article class="product-card">
+            <div class="product-image">
+              <span class="origin-badge">${escapeHtml(item.badge || "HANDMADE")}</span>
+              <img src="${escapeHtml(item.gambar)}" alt="${escapeHtml(item.nama)}" loading="lazy" />
             </div>
-            <button class="btn btn-primary btn-full" onclick="NailsApp.addToCart('${item.id}')">
-              + Tambah ke Keranjang
-            </button>
-          </div>
-        </article>
-      `).join("");
+            <div class="product-body">
+              <div class="product-cat">${escapeHtml(item.kategori)}</div>
+              <h3 class="product-title">${escapeHtml(item.nama)}</h3>
+              <p class="product-desc">${escapeHtml(item.deskripsi)}</p>
+              <div class="product-tags">
+                <span class="tag-pill">${escapeHtml(item.bentuk)}</span>
+                <span class="tag-pill">Tersedia</span>
+              </div>
+              <div class="product-price-row">
+                <span class="product-price">${formatRupiah(item.harga)}</span>
+                <span class="product-unit">/ set</span>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="handleAdd('${item.id}')">${btnText}</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function handleAdd(id) {
+      addToCart(id);
+      renderCatalog();
     }
 
     searchInput.addEventListener("input", renderCatalog);
