@@ -3,30 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Terima Kasih — Nails Studio</title>
+  <title>Pembayaran Berhasil — Nails Studio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
+  <header class="topbar">
+    <div class="topbar-inner">
       <a href="index.html" class="brand-link">
-        <div class="brand-name">Nails Studio</div>
-        <div class="brand-tagline">Konfirmasi Pesanan</div>
+        <span class="brand-title">Nails Studio</span>
+        <span class="brand-sub">STORE</span>
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="nav-btn">Katalog</a>
-        <a href="history.html" class="nav-btn">Riwayat Pesanan</a>
+        <a href="index.html" class="nav-link">Katalog</a>
+        <a href="cart.html" class="nav-link">Keranjang <span class="cart-badge">0</span></a>
+        <a href="history.html" class="nav-link">Riwayat Transaksi</a>
       </nav>
     </div>
   </header>
 
-  <main class="container" style="max-width:650px;">
-    <div class="panel" id="thankyou-root" style="text-align:center;"></div>
+  <section class="hero-banner">
+    <div class="hero-eyebrow">PEMBAYARAN TERKONFIRMASI</div>
+    <h1>Terima Kasih!</h1>
+    <p>Pembayaran QRIS Anda telah berhasil diterima dan pesanan sedang diproses.</p>
+  </section>
+
+  <main class="container">
+    <div class="invoice-card" id="thankyou-root"></div>
   </main>
 
   <footer>
-    <p><strong>Nails Studio</strong> — Katalog Resmi Kuku Palsu</p>
+    <p><strong>Nails Studio</strong> — Toko Online Kuku Palsu Handmade</p>
+    <p>Simulasi Pemesanan &amp; Pembayaran QRIS &bull; Instagram: @nailsstudio.id</p>
   </footer>
 
   <script src="app.js"></script>
@@ -38,35 +46,39 @@
     const root = document.getElementById("thankyou-root");
 
     if (!order) {
-      root.innerHTML = `<p>Data pesanan tidak ditemukan.</p><a href="index.html" class="btn btn-primary" style="margin-top:14px;">Ke Katalog</a>`;
+      root.innerHTML = `<p style="text-align:center;">Invoice tidak ditemukan.</p><div style="text-align:center;margin-top:14px;"><a href="index.html" class="btn btn-primary">Ke Katalog</a></div>`;
     } else {
       root.innerHTML = `
-        <div style="width:60px;height:60px;border-radius:50%;background:var(--success-bg);color:var(--success);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 14px;">&#10003;</div>
-        <span class="status-pill status-paid">Pesanan Dikonfirmasi (${escapeHtml(order.paymentMethod)})</span>
-        <h2 style="margin:12px 0 6px;font-family:Georgia,serif;">Terima Kasih, ${escapeHtml(order.customer.nama)}!</h2>
-        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">
-          Pesanan <strong>#${escapeHtml(order.id)}</strong> telah kami terima pada ${formatTime(order.createdAt)} dan sedang disiapkan.
-        </p>
+        <div class="invoice-top">
+          <div>
+            <div style="font-weight:800;font-size:1.05rem;">Invoice: ${escapeHtml(order.id)}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">${formatTime(order.createdAt)}</div>
+          </div>
+          <span class="status-pill status-paid">&bull; PAID</span>
+        </div>
 
-        <div style="text-align:left;background:var(--bg-body);padding:16px;border-radius:12px;border:1px solid var(--border);margin-bottom:20px;">
-          <div style="font-weight:700;margin-bottom:8px;">Rincian Pesanan:</div>
+        <div style="margin:20px 0;padding:16px;background:var(--bg-body);border-radius:10px;border:1px solid var(--border);font-size:0.88rem;">
+          <div><strong>Penerima:</strong> ${escapeHtml(order.customer.nama)} (${escapeHtml(order.customer.whatsapp)})</div>
+          <div><strong>Alamat:</strong> ${escapeHtml(order.customer.alamat)}, ${escapeHtml(order.customer.kota || "")}</div>
+          ${order.customer.catatan ? `<div><strong>Catatan:</strong> ${escapeHtml(order.customer.catatan)}</div>` : ""}
+        </div>
+
+        <div style="font-weight:700;margin-bottom:10px;">Rincian Item</div>
+        <div style="padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--border);">
           ${order.items.map((i) => `
             <div class="summary-row">
               <span>${escapeHtml(i.nama)} (${escapeHtml(i.bentuk)}) &times; ${i.qty}</span>
               <span>${formatRupiah(i.harga * i.qty)}</span>
             </div>
           `).join("")}
-          <div class="summary-row"><span>Ongkos Kirim (${escapeHtml(order.customer.pengiriman)})</span><span>${formatRupiah(order.ongkir)}</span></div>
-          <div class="summary-total"><span>Total Lunas</span><span>${formatRupiah(order.total)}</span></div>
-          <div style="font-size:0.83rem;color:var(--text-muted);margin-top:10px;">
-            <strong>Ukuran Kuku:</strong> ${escapeHtml(order.customer.ukuran)}<br/>
-            <strong>Alamat:</strong> ${escapeHtml(order.customer.alamat)}
-          </div>
         </div>
+        <div class="summary-row"><span>Subtotal</span><span>${formatRupiah(order.subtotal)}</span></div>
+        <div class="summary-row"><span>Ongkos Kirim (${escapeHtml(order.customer.pengiriman)})</span><span>${formatRupiah(order.ongkir)}</span></div>
+        <div class="summary-grand" style="margin-bottom:24px;"><span>Grand Total Lunas</span><span>${formatRupiah(order.total)}</span></div>
 
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
           <a href="index.html" class="btn btn-primary">Belanja Lagi</a>
-          <a href="history.html" class="btn btn-outline">Lihat Semua Riwayat</a>
+          <a href="history.html" class="btn btn-outline">Lihat Riwayat Transaksi</a>
         </div>
       `;
     }
