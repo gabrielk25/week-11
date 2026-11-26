@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QRIS Approve Simulator — Nails Studio</title>
+  <style>
+    :root {
+      --bg-body: #fff9fa;
+      --bg-card: #ffffff;
+      --primary: #c9647a;
+      --primary-light: #fae6ea;
+      --text-main: #2d2325;
+      --text-muted: #78696c;
+      --border: #f0dce0;
+      --gold: #b88e58;
+      --success: #1f7a4c;
+      --success-hover: #17613b;
+      --success-bg: #e7f6ee;
+      --success-border: #b6e3ca;
+      --danger: #b42318;
+      --danger-bg: #fdecec;
+      --danger-border: #f5c2bf;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 28px 16px 50px;
+    }
+
+    .wrap {
+      max-width: 660px;
+      margin: 0 auto;
+    }
+
+    .head {
+      background: linear-gradient(135deg, #fcebf0 0%, #fff5f7 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .head h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+
+    .head p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .live-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--success);
+      background-color: var(--success-bg);
+      border: 1px solid var(--success-border);
+      padding: 4px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--success);
+      animation: blink 1.4s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .section-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--primary);
+      margin: 22px 0 10px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tx-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tx-card.highlight {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .tx-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .tx-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .tx-amount {
+      font-size: 1.02rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .tx-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+    }
+
+    .btn-approve {
+      background-color: var(--success);
+      color: #ffffff;
+    }
+
+    .btn-approve:hover {
+      background-color: var(--success-hover);
+    }
+
+    .btn-reject {
+      background-color: transparent;
+      border-color: var(--danger-border);
+      color: var(--danger);
+    }
+
+    .btn-reject:hover {
+      background-color: var(--danger-bg);
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .tag-paid {
+      background-color: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .tag-rejected {
+      background-color: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .empty {
+      background-color: var(--bg-card);
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 24px 16px;
+      text-align: center;
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    .log {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--primary);
+      text-align: center;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="head">
+      <div>
+        <h1>QRIS Payment Simulator — Nails Studio</h1>
+        <p>Approve atau tolak transaksi QRIS Nails Studio secara realtime</p>
+      </div>
+      <span class="live-pill"><span class="dot"></span> LIVE SYNC</span>
+    </header>
+
+    <div id="sim-root"></div>
+    <div id="sim-log" class="log"></div>
+  </div>
+
+  <script src="qris-approve.js"></script>
+</body>
+</html>
