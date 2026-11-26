@@ -1,8 +1,8 @@
 (function () {
   "use strict";
 
-  const ORDERS_KEY = "ns_orders_v1";
-  const CHANNEL_NAME = "nails_studio_realtime_v1";
+  const ORDERS_KEY = "na_orders_v1";
+  const CHANNEL_NAME = "nusantara_avian_realtime_v1";
 
   const root = document.getElementById("sim-root");
   const logEl = document.getElementById("sim-log");
@@ -91,6 +91,7 @@
       return o.status !== "PENDING";
     });
 
+    // Bring focused order to top of pending if present
     if (focusOrderId) {
       pending.sort(function (a, b) {
         if (a.id === focusOrderId) return -1;
@@ -101,7 +102,7 @@
 
     const pendingHtml =
       pending.length === 0
-        ? '<div class="empty">Tidak ada pembayaran QRIS Nails Studio yang menunggu approval.</div>'
+        ? '<div class="empty">Tidak ada pembayaran QRIS yang menunggu approval.</div>'
         : '<div class="list">' +
           pending.map(function (o) {
             const isFocus = focusOrderId && o.id === focusOrderId;
