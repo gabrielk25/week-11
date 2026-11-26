@@ -8,30 +8,33 @@
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
+  <header class="topbar">
+    <div class="topbar-inner">
       <a href="index.html" class="brand-link">
-        <div class="brand-name">Nails Studio</div>
-        <div class="brand-tagline">Merchant QRIS Payment Simulator</div>
+        <span class="brand-title">Nails Studio</span>
+        <span class="brand-sub">QRIS SIMULATOR</span>
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="nav-btn">Katalog</a>
-        <a href="history.html" class="nav-btn">Riwayat Pesanan</a>
+        <a href="index.html" class="nav-link">Katalog</a>
+        <a href="history.html" class="nav-link">Riwayat Transaksi</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
-    <div class="section-title">
-      <span>Simulator Konfirmasi Pembayaran QRIS</span>
-      <span class="section-count">Real-time BroadcastChannel</span>
-    </div>
+  <section class="hero-banner">
+    <div class="hero-eyebrow">MERCHANT PAYMENT GATEWAY SIMULATOR</div>
+    <h1>Simulator Approve QRIS</h1>
+    <p>Klik Approve untuk menyetujui pembayaran QRIS secara real-time ke halaman pembeli.</p>
+  </section>
 
+  <main class="container" style="max-width:820px;">
     <div id="sim-root"></div>
 
-    <div class="panel">
-      <h3 style="margin-bottom:10px;font-size:1rem;">Log Aktivitas Simulator</h3>
-      <div id="sim-log" class="sim-log">Menunggu aktivitas transaksi...</div>
+    <div class="panel" style="margin-top:20px;">
+      <div class="panel-header">
+        <h3>Log Aktivitas Real-Time</h3>
+      </div>
+      <div id="sim-log" class="sim-log">Menunggu sinyal transaksi...</div>
     </div>
   </main>
 
