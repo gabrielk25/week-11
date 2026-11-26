@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nails Studio — Katalog Kuku Palsu</title>
   <style>
-    /* Reset & Variabel Warna */
     :root {
       --bg-body: #fff9fa;
       --bg-card: #ffffff;
@@ -30,7 +29,6 @@
       line-height: 1.6;
     }
 
-    /* Header */
     header {
       background-color: var(--bg-card);
       border-bottom: 1px solid var(--border);
@@ -52,7 +50,6 @@
       margin-top: 4px;
     }
 
-    /* Banner Katalog */
     .hero {
       max-width: 1100px;
       margin: 30px auto 10px;
@@ -77,7 +74,6 @@
       font-size: 0.95rem;
     }
 
-    /* Kontainer Katalog */
     .container {
       max-width: 1100px;
       margin: 0 auto;
@@ -102,14 +98,12 @@
       font-weight: normal;
     }
 
-    /* Grid Produk */
     .catalog-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 24px;
     }
 
-    /* Kartu Produk */
     .product-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border);
@@ -206,7 +200,6 @@
       font-weight: 500;
     }
 
-    /* Footer */
     footer {
       background-color: var(--bg-card);
       border-top: 1px solid var(--border);
@@ -220,7 +213,6 @@
       color: var(--text-main);
     }
 
-    /* Responsif Mobile */
     @media (max-width: 600px) {
       .hero h1 {
         font-size: 1.45rem;
@@ -240,13 +232,11 @@
 </head>
 <body>
 
-  <!-- Header Toko -->
   <header>
     <div class="brand-name">Nails Studio</div>
     <div class="brand-tagline">Koleksi Kuku Palsu Handmade &amp; Reusable Press-On Nails</div>
   </header>
 
-  <!-- Banner Informasi -->
   <section class="hero">
     <h1>Katalog Koleksi Terbaru</h1>
     <p>
@@ -255,26 +245,21 @@
     </p>
   </section>
 
-  <!-- Daftar Katalog -->
   <main class="container">
     <div class="section-title">
       <span>Semua Produk</span>
       <span class="section-count" id="total-produk">0 Produk</span>
     </div>
 
-    <div class="catalog-grid" id="catalog-grid">
-      <!-- Kartu produk akan dirender oleh JavaScript -->
-    </div>
+    <div class="catalog-grid" id="catalog-grid"></div>
   </main>
 
-  <!-- Footer Statis -->
   <footer>
     <p><strong>Nails Studio</strong> — Katalog Resmi Kuku Palsu</p>
     <p>Instagram: @nailsstudio.id &bull; Jam Operasional: Senin – Sabtu, 09.00 – 17.00 WIB</p>
   </footer>
 
   <script>
-    // Data statis 56 produk kuku palsu dengan file gambar dari folder 'kuku'
     const produkKuku = [
       {
         nama: "Colorful Pop Art",
@@ -646,7 +631,6 @@
         badgeTipe: "",
         gambar: "kuku/False_nails_arranged_on_fabric_fa334f2e.jpg"
       },
-    
       {
         nama: "Pearl Ivory Catalog",
         kategori: "Minimalis",
@@ -826,10 +810,499 @@
         badge: "Baru",
         badgeTipe: "gold",
         gambar: "kuku/Swan_Lake_fake_nails_set_199d1821.jpg"
+      },
+      {
+        nama: "Crimson Prosperity CNY",
+        kategori: "Festive Series",
+        deskripsi: "Nuansa merah dan emas khas Tahun Baru Imlek yang elegan dan meriah.",
+        harga: "Rp 78.000",
+        bentuk: "Almond",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Chinese_New_Year_nail_art_3af78afe.jpg"
+      },
+      {
+        nama: "Golden Fortune Imlek",
+        kategori: "Festive Series",
+        deskripsi: "Set kuku spesial Imlek dengan aksen ornamen keberuntungan berkilau.",
+        harga: "Rp 79.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Chinese_New_Year_nail_art_eb81051e.jpg"
+      },
+      {
+        nama: "Merry Holly Christmas",
+        kategori: "Festive Series",
+        deskripsi: "Desain Natal klasik dengan sentuhan warna merah, hijau, dan salju.",
+        harga: "Rp 76.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_nail_art_display_a2e44956.jpg"
+      },
+      {
+        nama: "Winter Wonderland Noel",
+        kategori: "Festive Series",
+        deskripsi: "Hiasan kuku bertema musim dingin dan Natal yang manis serta hangat.",
+        harga: "Rp 77.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_nail_art_display_a70e0652.jpg"
+      },
+      {
+        nama: "Festive Pine & Gold",
+        kategori: "Festive Series",
+        deskripsi: "Perpaduan motif cemara Natal dan glitter emas yang mewah.",
+        harga: "Rp 78.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_nail_art_display_aa6112b4.jpg"
+      },
+      {
+        nama: "Snowflake Candy Cane",
+        kategori: "Festive Series",
+        deskripsi: "Motif permen tongkat dan kepingan salju yang ceria untuk liburan.",
+        harga: "Rp 75.000",
+        bentuk: "Short Square",
+        badge: "Terlaris",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_press-on_nails_display_77dda0ee.jpg"
+      },
+      {
+        nama: "Cozy Holiday Sparkle",
+        kategori: "Festive Series",
+        deskripsi: "Kilau hangat khas malam Natal dengan detail artistik yang rapi.",
+        harga: "Rp 76.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_press-on_nails_display_ae1756c8.jpg"
+      },
+      {
+        nama: "Santa Velvet Cheer",
+        kategori: "Festive Series",
+        deskripsi: "Set kuku Natal dengan aksen merah beludru dan hiasan pesta.",
+        harga: "Rp 75.000",
+        bentuk: "Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_press-on_nails_display_db76a351.jpg"
+      },
+      {
+        nama: "Frosty Garland Set",
+        kategori: "Festive Series",
+        deskripsi: "Desain Natal bernuansa sejuk dengan detail halus di setiap jari.",
+        harga: "Rp 77.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_press-on_nail_design_f62a9ce3.jpg"
+      },
+      {
+        nama: "Jingle Bell Shimmer",
+        kategori: "Festive Series",
+        deskripsi: "Tampilan kuku Natal penuh kilau untuk melengkapi momen spesial.",
+        harga: "Rp 76.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_press-on_nail_design_fe7b8105.jpg"
+      },
+      {
+        nama: "Crimson Noel Edition",
+        kategori: "Festive Series",
+        deskripsi: "Kombinasi warna merah Natal dan aksen putih salju yang elegan.",
+        harga: "Rp 78.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Christmas_press-on_nail_set_display_a1dddf5f.jpg"
+      },
+      {
+        nama: "Starry Eve Christmas",
+        kategori: "Festive Series",
+        deskripsi: "Motif bintang malam Natal dengan efek glossy yang menawan.",
+        harga: "Rp 79.000",
+        bentuk: "Almond",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Christmas_press-on_nail_set_display_fa4d15d2.jpg"
+      },
+      {
+        nama: "Pastel Bunny Easter",
+        kategori: "Seasonal Series",
+        deskripsi: "Desain Paskah ceria dengan warna pastel lembut dan motif kelinci imut.",
+        harga: "Rp 72.000",
+        bentuk: "Short Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Easter_press-on_nails_display_e7db89cf.jpg"
+      },
+      {
+        nama: "Spring Egg Blossom",
+        kategori: "Seasonal Series",
+        deskripsi: "Motif musim semi bertema Paskah yang segar, manis, dan penuh warna.",
+        harga: "Rp 71.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Easter_press-on_nail_design_display_43998336.jpg"
+      },
+      {
+        nama: "Daisy Meadow Easter",
+        kategori: "Seasonal Series",
+        deskripsi: "Nuansa padang bunga musim semi dengan warna-warna cerah lembut.",
+        harga: "Rp 72.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Easter_press_on_nails_display_99505b1b.jpg"
+      },
+      {
+        nama: "Imperial Lunar Bloom",
+        kategori: "Festive Series",
+        deskripsi: "Desain Tahun Baru Lunar dengan motif bunga mekar dan aksen emas.",
+        harga: "Rp 80.000",
+        bentuk: "Almond",
+        badge: "Terlaris",
+        badgeTipe: "",
+        gambar: "kuku/Lunar_New_Year_nail_art_5d021c24.jpg"
+      },
+      {
+        nama: "Chic Studio Pattern",
+        kategori: "Artistic Series",
+        deskripsi: "Set nail art modern dengan perpaduan motif artistik yang rapi.",
+        harga: "Rp 68.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_1f4b81ed.jpg"
+      },
+      {
+        nama: "Velvet Swirl Art",
+        kategori: "Artistic Series",
+        deskripsi: "Garis swirl lembut bergaya minimalis modern untuk tampil modis.",
+        harga: "Rp 67.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_2a1024cf.jpg"
+      },
+      {
+        nama: "Blush Aura Marble",
+        kategori: "Glam Series",
+        deskripsi: "Kombinasi efek marmer lembut dan warna blush yang feminin.",
+        harga: "Rp 70.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_3667c136.jpg"
+      },
+      {
+        nama: "Pastel Breeze Set",
+        kategori: "Pastel Pop",
+        deskripsi: "Warna pastel lembut dengan detail bersih untuk tampilan harian.",
+        harga: "Rp 64.000",
+        bentuk: "Short Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_50476186.jpg"
+      },
+      {
+        nama: "Glam Shimmer Muse",
+        kategori: "Glam Series",
+        deskripsi: "Kilau shimmer halus yang membuat tampilan tangan tampak lebih cerah.",
+        harga: "Rp 69.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_50a49842.jpg"
+      },
+      {
+        nama: "Soft French Twist",
+        kategori: "Minimalis",
+        deskripsi: "Sentuhan modern pada gaya French tip klasik yang anggun.",
+        harga: "Rp 65.000",
+        bentuk: "Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_72c2a3b0.jpg"
+      },
+      {
+        nama: "Pearl Accent Chic",
+        kategori: "Luxury Series",
+        deskripsi: "Set kuku elegan dengan hiasan mutiara kecil yang memikat.",
+        harga: "Rp 74.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_7d7eadc9.jpg"
+      },
+      {
+        nama: "Dreamy Ombre Gloss",
+        kategori: "Glam Series",
+        deskripsi: "Gradasi warna lembut dengan lapisan gel mengkilap tahan lama.",
+        harga: "Rp 68.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_7f40e383.jpg"
+      },
+      {
+        nama: "Mocha Latte Swirl",
+        kategori: "Earth Tone",
+        deskripsi: "Motif hangat bernuansa kopi susu yang tenang dan estetik.",
+        harga: "Rp 66.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_81703f83.jpg"
+      },
+      {
+        nama: "Artistic Petal Glow",
+        kategori: "Artistic Series",
+        deskripsi: "Sentuhan lukisan kelopak bunga halus untuk kesan manis.",
+        harga: "Rp 71.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_design_display_ce3557bc.jpg"
+      },
+      {
+        nama: "Crystal Silk Elegance",
+        kategori: "Luxury Series",
+        deskripsi: "Tampilan mewah dengan efek kilap kristal dan warna dasar lembut.",
+        harga: "Rp 75.000",
+        bentuk: "Stiletto",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Nail_art_design_display_fdbca319.jpg"
+      },
+      {
+        nama: "Butterfly Flutter Set",
+        kategori: "Artistic Series",
+        deskripsi: "Hiasan kupu-kupu cantik dengan detail halus yang tampak hidup.",
+        harga: "Rp 76.000",
+        bentuk: "Almond",
+        badge: "Terlaris",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_featuring_butterflies_5c117b5c.jpg"
+      },
+      {
+        nama: "Minimalist Nude Studio",
+        kategori: "Minimalis",
+        deskripsi: "Set kuku bernuansa netral bersih yang cocok untuk acara formal maupun santai.",
+        harga: "Rp 60.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_on_background_1d000a69.jpg"
+      },
+      {
+        nama: "Rosy Satin Essence",
+        kategori: "Glam Series",
+        deskripsi: "Warna pink lembut dengan hasil akhir mengkilap seperti salon.",
+        harga: "Rp 63.000",
+        bentuk: "Short Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_on_background_e3a59b8f.jpg"
+      },
+      {
+        nama: "Everyday Glam Press-On",
+        kategori: "Glam Series",
+        deskripsi: "Koleksi press-on serbaguna dengan desain manis yang mudah dipadukan.",
+        harga: "Rp 65.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_press-on_set_a866e41a.jpg"
+      },
+      {
+        nama: "Coquette Ribbon Bow",
+        kategori: "Luxury Series",
+        deskripsi: "Desain bergaya coquette dengan aksen pita manis yang sangat populer.",
+        harga: "Rp 78.000",
+        bentuk: "Almond",
+        badge: "Terlaris",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_with_bow_af28a22b.jpg"
+      },
+      {
+        nama: "Sweet Easter Pastel",
+        kategori: "Seasonal Series",
+        deskripsi: "Ornamen Paskah yang ceria berpadu dengan warna pastel lembut.",
+        harga: "Rp 72.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_with_Easter_0943d267.jpg"
+      },
+      {
+        nama: "Midnight Fireworks Spark",
+        kategori: "Festive Series",
+        deskripsi: "Motif kembang api berkilauan di atas warna dasar malam yang dramatis.",
+        harga: "Rp 79.000",
+        bentuk: "Coffin",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Nail_art_display_with_fireworks_c8e9f61b.jpg"
+      },
+      {
+        nama: "Golden Foil Glamour",
+        kategori: "Luxury Series",
+        deskripsi: "Aksen lembaran emas mewah untuk tampilan jari yang berkelas.",
+        harga: "Rp 77.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_with_gold_a9e49f13.jpg"
+      },
+      {
+        nama: "Gilded Edge Luxury",
+        kategori: "Luxury Series",
+        deskripsi: "Desain elegan berhias garis dan detail emas yang menawan.",
+        harga: "Rp 78.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_display_with_gold_d96e314f.jpg"
+      },
+      {
+        nama: "Spring Tulip Garden",
+        kategori: "Artistic Series",
+        deskripsi: "Lukisan bunga tulip lembut bernuansa segar untuk tampilan feminin.",
+        harga: "Rp 74.000",
+        bentuk: "Oval",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Nail_art_display_with_tulips_9e80c610.jpg"
+      },
+      {
+        nama: "Signature Chic Press-On",
+        kategori: "Minimalis",
+        deskripsi: "Set kuku praktis dengan tampilan bersih dan kilap gel tahan lama.",
+        harga: "Rp 62.000",
+        bentuk: "Short Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_press-on_set_a2c22896.jpg"
+      },
+      {
+        nama: "Soft Bloom Collection",
+        kategori: "Glam Series",
+        deskripsi: "Perpaduan warna lembut dan detail manis untuk tampilan anggun.",
+        harga: "Rp 66.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Nail_art_set_display_90d7ce55.jpg"
+      },
+      {
+        nama: "Pure Elegance Set",
+        kategori: "Minimalis",
+        deskripsi: "Desain simpel yang rapi untuk menunjang penampilan profesional.",
+        harga: "Rp 60.000",
+        bentuk: "Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_display_6144bf99.jpg"
+      },
+      {
+        nama: "Modern Chic Motif",
+        kategori: "Artistic Series",
+        deskripsi: "Motif kontemporer yang unik dan tetap nyaman dipakai harian.",
+        harga: "Rp 68.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_display_design_63e27c80.jpg"
+      },
+      {
+        nama: "Easter Bloom Theme",
+        kategori: "Seasonal Series",
+        deskripsi: "Set kuku bertema Paskah dengan warna ceria yang memikat.",
+        harga: "Rp 72.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_display_Easter_theme_2355abd5.jpg"
+      },
+      {
+        nama: "Valentine Love Blush",
+        kategori: "Themed Series",
+        deskripsi: "Desain romantis bernuansa pink dan motif hati untuk hari kasih sayang.",
+        harga: "Rp 75.000",
+        bentuk: "Almond",
+        badge: "Terlaris",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_display_valentine_5f397283.jpg"
+      },
+      {
+        nama: "Sweetheart Valentine Set",
+        kategori: "Themed Series",
+        deskripsi: "Kombinasi warna manis dan detail cinta yang anggun di jari.",
+        harga: "Rp 75.000",
+        bentuk: "Coffin",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_display_valentine_e38e8369.jpg"
+      },
+      {
+        nama: "Eid Mubarak Elegance",
+        kategori: "Festive Series",
+        deskripsi: "Desain anggun bertema Lebaran dengan nuansa lembut dan sentuhan emas.",
+        harga: "Rp 78.000",
+        bentuk: "Almond",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Press-on_nails_display_with_Eid_eef2281d.jpg"
+      },
+      {
+        nama: "Easter Meadow Joy",
+        kategori: "Seasonal Series",
+        deskripsi: "Set kuku Paskah dengan detail warna pastel dan hiasan ceria.",
+        harga: "Rp 71.000",
+        bentuk: "Short Square",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_Easter_design_8898fc89.jpg"
+      },
+      {
+        nama: "Spring Bunny Pastel",
+        kategori: "Seasonal Series",
+        deskripsi: "Motif musim semi bertema Paskah yang segar dan manis dipandang.",
+        harga: "Rp 72.000",
+        bentuk: "Oval",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_Easter_design_e24055e2.jpg"
+      },
+      {
+        nama: "Easter Egg Speckle",
+        kategori: "Seasonal Series",
+        deskripsi: "Tampilan kuku ceria dengan aksen motif Paskah yang lembut.",
+        harga: "Rp 70.000",
+        bentuk: "Almond",
+        badge: "",
+        badgeTipe: "",
+        gambar: "kuku/Press-on_nails_Easter_display_a1fd91ed.jpg"
+      },
+      {
+        nama: "Rose Heart Valentine",
+        kategori: "Themed Series",
+        deskripsi: "Nuansa romantis merah muda dan aksen cinta untuk momen spesial.",
+        harga: "Rp 76.000",
+        bentuk: "Almond",
+        badge: "Baru",
+        badgeTipe: "gold",
+        gambar: "kuku/Valentine_press-on_nails_display_2d1c439e.jpg"
       }
     ];
 
-    // Merender daftar produk ke dalam grid katalog
     document.addEventListener("DOMContentLoaded", () => {
       const grid = document.getElementById("catalog-grid");
       const totalLabel = document.getElementById("total-produk");
