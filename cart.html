@@ -8,103 +8,116 @@
 </head>
 <body>
 
-  <header>
-    <div class="header-inner">
+  <header class="topbar">
+    <div class="topbar-inner">
       <a href="index.html" class="brand-link">
-        <div class="brand-name">Nails Studio</div>
-        <div class="brand-tagline">Keranjang Belanja</div>
+        <span class="brand-title">Nails Studio</span>
+        <span class="brand-sub">STORE</span>
       </a>
       <nav class="nav-links">
-        <a href="index.html" class="nav-btn">Katalog</a>
-        <a href="history.html" class="nav-btn">Riwayat Pesanan</a>
-        <a href="cart.html" class="nav-btn active">Keranjang <span class="cart-badge">0</span></a>
+        <a href="index.html" class="nav-link">Katalog</a>
+        <a href="cart.html" class="nav-link active">Keranjang <span class="cart-badge">0</span></a>
+        <a href="history.html" class="nav-link">Riwayat Transaksi</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
-    <div class="section-title">
-      <span>Keranjang Belanja Anda</span>
-      <a href="index.html" class="btn btn-outline" style="font-size:0.82rem;">&larr; Lanjut Belanja</a>
-    </div>
+  <section class="hero-banner">
+    <div class="hero-eyebrow">LANGKAH 1 DARI 3</div>
+    <h1>Keranjang Belanja</h1>
+    <p>Atur jumlah pesanan atau hapus item sebelum melanjutkan ke halaman checkout.</p>
+  </section>
 
+  <main class="container">
     <div class="two-col" id="cart-layout">
-      <div class="panel" id="cart-items-box"></div>
-      <div class="panel" id="cart-summary-box"></div>
+      <div class="panel" id="cart-items-panel"></div>
+      <div class="panel" id="cart-summary-panel"></div>
     </div>
   </main>
 
   <footer>
-    <p><strong>Nails Studio</strong> — Katalog Resmi Kuku Palsu</p>
+    <p><strong>Nails Studio</strong> — Toko Online Kuku Palsu Handmade</p>
+    <p>Simulasi Pemesanan &amp; Pembayaran QRIS &bull; Instagram: @nailsstudio.id</p>
   </footer>
 
   <script src="app.js"></script>
   <script>
-    const { getCart, updateCartQty, removeFromCart, getCartSubtotal, formatRupiah, escapeHtml } = window.NailsApp;
+    const { getCart, updateCartQty, removeFromCart, clearCart, getCartCount, getCartSubtotal, formatRupiah, escapeHtml } = window.NailsApp;
 
     function renderCart() {
       const cart = getCart();
-      const itemsBox = document.getElementById("cart-items-box");
-      const summaryBox = document.getElementById("cart-summary-box");
+      const itemsPanel = document.getElementById("cart-items-panel");
+      const summaryPanel = document.getElementById("cart-summary-panel");
 
       if (!cart.length) {
-        itemsBox.innerHTML = `
-          <div style="text-align:center;padding:32px 10px;">
+        itemsPanel.style.gridColumn = "1 / -1";
+        itemsPanel.innerHTML = `
+          <div style="text-align:center;padding:36px 12px;">
             <p style="color:var(--text-muted);margin-bottom:16px;">Keranjang belanja Anda masih kosong.</p>
             <a href="index.html" class="btn btn-primary">Lihat Katalog Kuku</a>
           </div>`;
-        summaryBox.style.display = "none";
+        summaryPanel.style.display = "none";
         return;
       }
 
-      summaryBox.style.display = "block";
-      itemsBox.innerHTML = cart.map((item) => `
-        <div class="cart-item">
-          <img src="${escapeHtml(item.gambar)}" alt="${escapeHtml(item.nama)}" />
-          <div class="cart-item-info">
-            <strong>${escapeHtml(item.nama)}</strong>
-            <div style="font-size:0.82rem;color:var(--text-muted);">Bentuk: ${escapeHtml(item.bentuk)}</div>
-            <div style="color:var(--primary);font-weight:700;margin-top:4px;">${formatRupiah(item.harga)}</div>
-          </div>
-          <div class="qty-control">
-            <button onclick="changeQty('${item.id}', -1)">-</button>
-            <span>${item.qty}</span>
-            <button onclick="changeQty('${item.id}', 1)">+</button>
-          </div>
-          <button class="btn btn-outline" style="padding:6px 10px;color:var(--danger);" onclick="deleteItem('${item.id}')">Hapus</button>
-        </div>
-      `).join("");
-
+      itemsPanel.style.gridColumn = "auto";
+      summaryPanel.style.display = "block";
+      const totalItems = getCartCount();
       const subtotal = getCartSubtotal();
-      const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+      const estOngkir = 15000;
 
-      summaryBox.innerHTML = `
-        <h3 style="margin-bottom:14px;font-family:Georgia,serif;">Ringkasan Belanja</h3>
+      itemsPanel.innerHTML = `
+        <div class="panel-header">
+          <h3>Daftar Item (${totalItems})</h3>
+          <button class="btn btn-danger-outline" onclick="handleClear()">Kosongkan Keranjang</button>
+        </div>
+        ${cart.map((item) => `
+          <div class="cart-row">
+            <div class="cart-left">
+              <img src="${escapeHtml(item.gambar)}" alt="${escapeHtml(item.nama)}" class="cart-thumb" />
+              <div>
+                <div style="font-weight:700;font-size:0.98rem;">${escapeHtml(item.nama)}</div>
+                <div style="font-size:0.8rem;color:var(--text-muted);margin:2px 0 4px;">Bentuk: ${escapeHtml(item.bentuk)} &bull; Satuan: / set</div>
+                <div style="font-weight:700;color:var(--primary);font-size:0.9rem;">${formatRupiah(item.harga)} / set</div>
+              </div>
+            </div>
+            <div class="cart-right">
+              <div class="qty-box">
+                <button onclick="handleQty('${item.id}', -1)">&minus;</button>
+                <span>${item.qty}</span>
+                <button onclick="handleQty('${item.id}', 1)">+</button>
+              </div>
+              <div style="font-weight:800;font-size:0.95rem;">${formatRupiah(item.harga * item.qty)}</div>
+              <button class="btn btn-danger-outline" onclick="handleRemove('${item.id}')">Hapus</button>
+            </div>
+          </div>
+        `).join("")}
+      `;
+
+      summaryPanel.innerHTML = `
+        <div class="panel-header">
+          <h3>Ringkasan Belanja</h3>
+        </div>
         <div class="summary-row">
-          <span>Total Set Kuku (${totalQty} pcs)</span>
+          <span>Subtotal (${totalItems} item)</span>
           <span>${formatRupiah(subtotal)}</span>
         </div>
         <div class="summary-row">
-          <span>Estimasi Ongkos Kirim</span>
-          <span>Dihitung saat checkout</span>
+          <span>Estimasi Pengiriman Reguler</span>
+          <span>${formatRupiah(estOngkir)}</span>
         </div>
-        <div class="summary-total" style="margin-bottom:18px;">
-          <span>Subtotal</span>
-          <span>${formatRupiah(subtotal)}</span>
+        <div class="summary-grand" style="margin-bottom:18px;">
+          <span>Grand Total</span>
+          <span>${formatRupiah(subtotal + estOngkir)}</span>
         </div>
-        <a href="checkout.html" class="btn btn-primary btn-full">Lanjut ke Checkout &rarr;</a>
+        <a href="checkout.html" class="btn btn-primary btn-full" style="margin-bottom:10px;">Lanjut ke Checkout &rarr;</a>
+        <a href="index.html" class="btn btn-outline btn-full">+ Tambah Set Lainnya</a>
       `;
     }
 
-    function changeQty(id, delta) {
-      updateCartQty(id, delta);
-      renderCart();
-    }
-
-    function deleteItem(id) {
-      removeFromCart(id);
-      renderCart();
-    }
+    function handleQty(id, delta) { updateCartQty(id, delta); renderCart(); }
+    function handleRemove(id) { removeFromCart(id); renderCart(); }
+    function handleClear() { clearCart(); renderCart(); }
 
     renderCart();
   </script>
